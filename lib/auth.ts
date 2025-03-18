@@ -44,5 +44,5 @@ export async function loginUser(email: string, password: string) {
   const user = await verifyUser(email, password);
   if (!user) return { success: false, error: "Invalid email or password" };
 
-  return { success: true, user };
+  return user;
 }
