@@ -1,4 +1,5 @@
 "use server";
+import { redirect } from "next/navigation";
 import {
   SignupFormSchema,
   SignupFormState,
@@ -6,8 +7,9 @@ import {
   LoginFormState,
 } from "@/lib/definitions";
 import { createUser, loginUser } from "@/lib/auth";
-import { createSession } from "@/lib/session";
+import { createSession, deleteSession } from "@/lib/session";
 
+// Create User
 export async function signup(formState: SignupFormState, formData: FormData) {
   //validate fields
   const validatedFields = SignupFormSchema.safeParse({
@@ -28,8 +30,11 @@ export async function signup(formState: SignupFormState, formData: FormData) {
   const user = await createUser(name, email, password);
 
   await createSession(user._id);
+
+  redirect("/profile");
 }
 
+// Login User
 export async function login(formState: LoginFormState, formData: FormData) {
   // Validate Fields
   const validatedFields = LoginFormSchema.safeParse({
@@ -47,4 +52,12 @@ export async function login(formState: LoginFormState, formData: FormData) {
   const { email, password } = validatedFields.data;
   const user = await loginUser(email, password);
   await createSession(user._id);
+
+  redirect("/profile");
+}
+
+// Logout User
+export async function logout() {
+  deleteSession();
+  redirect("/login");
 }
